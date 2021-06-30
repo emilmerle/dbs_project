@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 if __name__ == "__main__":
-    df = pd.read_csv("data_files/gdp.csv")
+    df = pd.read_csv("../data_files/gdp.csv")
 
     # drop last row because its empty
     df = df.iloc[: , :-1]
@@ -27,4 +27,4 @@ if __name__ == "__main__":
     #print(df.info())
 
     # export cleaned data to new .csv file
-    df.to_csv("data_files/gdp_clean.csv", index=False)
+    df.to_csv("../data_files/gdp_clean.csv", index=False)
