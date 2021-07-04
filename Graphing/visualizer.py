@@ -44,6 +44,9 @@ if __name__ == "__main__":
     if (args.name and args.code):
         exit("Too many arguments given")
 
+    if (not args.name and not args.code):
+        exit("Too few arguments given")
+
     # Variablen werden definiert
     dbname = "dbs_project"
     username = "postgres"
