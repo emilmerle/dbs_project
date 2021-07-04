@@ -77,9 +77,59 @@ if __name__ == "__main__":
             index_list.append(index)
     df_le = df_le.drop(index_list)
 
-    print(df_le.info(), df_gdp.info())
+    #print(df_le.info(), df_gdp.info())
 
     # export cleaned data to new .csv files
     df_gdp.to_csv("../data_files/gdp_clean.csv", index=False)
     df_le.to_csv("../data_files/life_expectancy_clean.csv", index=False)
 
+
+
+    # Clean other datasets
+    df_co = pd.read_csv("../data_files/co2_emission.csv")
+
+    # drop rows (countries) without country code
+    df_co = df_co.dropna()
+
+    # drop rows that are not between 1960 and 2016
+    df_co = df_co.drop(df_co[df_co.Year > 2016].index)
+    df_co = df_co.drop(df_co[df_co.Year < 1960].index)
+
+    # convert CO2 emissions to integer
+    df_co = df_co.astype({"Annual CO₂ emissions (tonnes )": np.int64})
+
+    df_co.to_csv("../data_files/co2_emission_clean.csv", index=False)
+
+
+
+    df_pg = pd.read_csv("../data_files/population_growth.csv")
+
+    # drop column "Indicator Code" and "Indicator Name" because they're always the same (needed?)
+    df_pg = df_pg.drop(df_pg.columns[2:4], axis=1)
+
+    # drop last 4 columns (after 2016)
+    df_pg = df_pg.iloc[: , :-4]
+
+    # fill missing values with 0
+    df_pg = df_pg.fillna(0)
+
+    # round all numbers to 5 decimals
+    df_pg = df_pg.round(decimals=5)
+
+    # find indices of rows that are not in both datasets and delete them from df_pg
+    index_list = []
+    for index, row in df_pg.iterrows():
+        if row["Country Code"] not in countries: 
+            index_list.append(index)
+    df_pg = df_pg.drop(index_list)
+
+    df_pg.to_csv("../data_files/population_growth_clean.csv", index=False)
+
+
+
+    df_pt = pd.read_csv("../data_files/population_total.csv")
+
+    # drop all rows with year greater than 2016
+    df_pt = df_pt.drop(df_pt[df_pt.Year > 2016].index)
+
+    df_pt.to_csv("../data_files/population_total_clean.csv", index=False)
