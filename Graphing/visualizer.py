@@ -10,8 +10,11 @@ def get_data(country, identifier):
     attribute = ""
     if(identifier == "c"):
         attribute = "country_code"
+        cur.execute(f"SELECT country_name FROM gdp WHERE country_code = '{country}'")
+        name = cur.fetchone()[0]
     else:
         attribute = "country_name"
+        name = country
 
     table = "gdp"
     query = f"SELECT * FROM {table} WHERE {attribute} = '{country}'"
@@ -27,7 +30,7 @@ def get_data(country, identifier):
     cur.execute(query)
     le_result = list(cur.fetchone())[3:-1]
 
-    return gdp_result, le_result
+    return gdp_result, le_result, name
 
 if __name__ == "__main__":
 
@@ -63,19 +66,23 @@ if __name__ == "__main__":
     for i in range(len(names)):
         names[i] = names[i][0]
 
+    name = ""
+
     if(args.code):
         if(args.code not in codes):
             exit("Given country code not found")
-        gdp, le = get_data(args.code, "c")
+        gdp, le, name = get_data(args.code, "c")
 
     if(args.name):
         if(args.name not in names):
             exit("Given country name not found")
-        gdp, le = get_data(args.name, "n")
+        gdp, le, name = get_data(args.name, "n")
 
 
     # plotting:
     fig, ax = plt.subplots()
+
+    ax.set_title(name)
 
     color = "tab:red"
     ax.set_xlabel("years")
