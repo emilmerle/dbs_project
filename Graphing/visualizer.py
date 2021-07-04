@@ -82,6 +82,16 @@ if __name__ == "__main__":
         gdp, le, name = get_data(args.name, "n")
 
 
+    # data manipulation
+    # replace missing values (0) with None to skip them in the plot
+    for i in range(len(gdp)):
+        if gdp[i] == 0:
+            gdp[i] = None
+
+    for i in range(len(le)):
+        if le[i] == 0:
+            le[i] = None
+
     # plotting:
     fig, ax = plt.subplots()
 
