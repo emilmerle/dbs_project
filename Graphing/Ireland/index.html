@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>United Kingdom</title>
+    <script src = "https://cdn.jsdelivr.net/npm/chart.js@3.4.0/dist/chart.min.js"></script>
+</head>
+<body>
+    <canvas id = "chart" width="100" height="50"></canvas>
+
+    <script>
+        
+        chartIt();''
+        async function chartIt(){
+            const data = await getData();    
+            const ctx = document.getElementById('chart').getContext('2d');
+
+            var myChart = new Chart(ctx, {
+                type: "line",
+                data: {
+                datasets: [{
+                    data: data.y_vals_gdp,
+                    label: "GDP",
+                    backgroundColor: ['rgba(20, 200, 50, 2)'],
+                    borderColor: ['rgba(20, 200, 50, 2)'],
+
+                    // This binds the dataset to the left y axis
+                    yAxisID: 'left-y-axis',
+                     }, {
+                    data: data.y_vals_life,
+                    label: "Life Expectancy",
+                    backgroundColor: ['rgba(255, 99, 132, 1)'],
+                    borderColor: ['rgba(255, 99, 132, 1)'],
+                    // This binds the dataset to the right y axis
+                    yAxisID: 'right-y-axis',
+                }],
+                labels: data.x_labels,
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        id: 'left-y-axis',
+                        type: "linear",
+                        position: "left",
+                    }, {
+                    id: 'right-y-axis',
+                    type: "linear",
+                    position: "right",
+                    }],
+                }, 
+            },
+        });
+
+            
+        }
+
+
+        
+        async function getData(){
+            const x_labels = [];
+            const y_vals_life = [];
+            const y_vals_gdp = [];
+
+
+            const response = await fetch('gdp_graph.csv');
+            const response2 = await fetch('life_graph.csv');
+            const data = await response.text();
+            const data2 = await response2.text();
+
+            //console.log(data);
+            for(var i = 1960; i<2017; i++){
+                x_labels.push(i);
+            }
+            
+            const gdp = data.split('\n').slice(4,5);
+            console.log(gdp);
+            gdp.forEach(elm =>{
+                const vals = elm.split(',');
+                for (var i = 2; i < vals.length; i++){
+                y_vals_gdp.push(vals[i]);
+            }
+            });
+
+
+            const life = data2.split('\n').slice(4,5);
+            console.log(life);
+            life.forEach(elm =>{
+                const vals = elm.split(',');
+                for (var i = 2; i < vals.length; i++){
+                y_vals_life.push(vals[i]);
+            }
+            });
+
+        
+            return {x_labels, y_vals_gdp, y_vals_life};
+            
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch and Graph CSV</title>
+    <script src = "https://cdn.jsdelivr.net/npm/chart.js@3.4.0/dist/chart.min.js"></script>
+</head>
+<body>
+    <canvas id = "chart" width="100" height="50"></canvas>
+
+    <script>
+        
+        chartIt();''
+        async function chartIt(){
+            const data = await getData();    
+            const ctx = document.getElementById('chart').getContext('2d');
+
+            const myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.x_labels,
+                datasets: [{
+                label: 'United Kingdom',
+                data: data.y_vals_UnitedKingdom,
+                backgroundColor: [
+                'rgba(255, 99, 132, 1)',
+                ],
+                borderColor: [
+                'rgba(255, 99, 132, 1)',
+                ],
+                borderWidth: 1
+                },
+                {
+                label: 'China',
+                data: data.y_vals_China,
+                backgroundColor: [
+                'rgba(20, 200, 50, 2)',
+                ],
+                borderColor: [
+                'rgba(20, 200, 50, 2)',
+                ],
+                borderWidth: 1     
+                },
+                {
+                label: 'France',
+                data: data.y_vals_France,
+                backgroundColor: [
+                'rgba(225, 225, 27, 1)',
+                ],
+                borderColor: [
+                'rgba(225, 225, 27, 1)',
+                ],
+                borderWidth: 1     
+                }]
+            } 
+            })
+        }
+
+
+        
+        async function getData(){
+            const x_labels = [];
+            const y_vals_UnitedKingdom = [];
+            const y_vals_China = [];
+            const y_vals_France = [];
+
+
+            const response = await fetch('gdp_graph.csv');
+            const data = await response.text();
+            //console.log(data);
+            for(var i = 1960; i<2017; i++){
+                x_labels.push(i);
+            }
+
+           /* const table = data.split('\n').slice(1);
+            table.forEach( elm => {
+                const column = elm.split(',');
+                const country_name = column[0];
+                const country_code = column[1];
+                //console.log(country_name, country_code);
+                console.log(elm[]);
+
+            });*/
+            
+
+            const first_country = data.split('\n').slice(1,2);
+            console.log(first_country);
+            first_country.forEach(elm =>{
+                const vals = elm.split(',');
+                for (var i = 2; i < vals.length; i++){
+                y_vals_UnitedKingdom.push(vals[i]);
+            }
+            });
+
+
+            const second_country = data.split('\n').slice(2,3);
+            console.log(second_country);
+            second_country.forEach(elm =>{
+                const vals = elm.split(',');
+                for (var i = 2; i < vals.length; i++){
+                y_vals_China.push(vals[i]);
+            }
+            });
+
+            const third_country = data.split('\n').slice(3,4);
+            console.log(third_country);
+            third_country.forEach(elm =>{
+                const vals = elm.split(',');
+                for (var i = 2; i < vals.length; i++){
+                    y_vals_France.push(vals[i]);
+            }
+            });
+            return {x_labels, y_vals_UnitedKingdom, y_vals_China, y_vals_France};
+            
+        }
+    </script>
+</body>
+</html>
