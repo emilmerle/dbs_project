@@ -95,6 +95,9 @@ if __name__ == "__main__":
     df_co = df_co.drop(df_co[df_co.Year > 2016].index)
     df_co = df_co.drop(df_co[df_co.Year < 1960].index)
 
+    # drop rows with Code longer than 3
+    df_co = df_co.drop(df_co[df_co.Code.map(len) > 3].index)
+
     # reshape table like the other ones
     df_co = df_co.pivot_table(values="Annual CO₂ emissions (tonnes )", columns="Year", index=["Entity", "Code"])
 
@@ -106,6 +109,8 @@ if __name__ == "__main__":
     for i in range(1960, 2017):
         type_dict_int[i] = np.int64
     df_co = df_co.astype(type_dict_int)
+
+    
 
     df_co.to_csv("../data_files/co2_emission_clean.csv")
 
