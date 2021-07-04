@@ -95,10 +95,19 @@ if __name__ == "__main__":
     df_co = df_co.drop(df_co[df_co.Year > 2016].index)
     df_co = df_co.drop(df_co[df_co.Year < 1960].index)
 
-    # convert CO2 emissions to integer
-    df_co = df_co.astype({"Annual CO₂ emissions (tonnes )": np.int64})
+    # reshape table like the other ones
+    df_co = df_co.pivot_table(values="Annual CO₂ emissions (tonnes )", columns="Year", index=["Entity", "Code"])
 
-    df_co.to_csv("../data_files/co2_emission_clean.csv", index=False)
+    # fill missing values with 0
+    df_co = df_co.fillna(0)
+
+    # convert CO2 emissions to integer
+    type_dict_int = {}
+    for i in range(1960, 2017):
+        type_dict_int[i] = np.int64
+    df_co = df_co.astype(type_dict_int)
+
+    df_co.to_csv("../data_files/co2_emission_clean.csv")
 
 
 
@@ -132,4 +141,13 @@ if __name__ == "__main__":
     # drop all rows with year greater than 2016
     df_pt = df_pt.drop(df_pt[df_pt.Year > 2016].index)
 
-    df_pt.to_csv("../data_files/population_total_clean.csv", index=False)
+    # shape table like other ones
+    df_pt = df_pt.pivot_table(values="Count", columns="Year", index="Country Name")
+
+    # fill missing values with 0
+    df_pt = df_pt.fillna(0)
+
+    # cast datatype of all the values of the years to int because float is not needed
+    df_pt = df_pt.astype(type_dict_int)
+
+    df_pt.to_csv("../data_files/population_total_clean.csv")
